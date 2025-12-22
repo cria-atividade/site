@@ -1,11 +1,249 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Cria Atividade</title>
+<meta charset="UTF-8">
+<title>Instituto Cria-Atividade | Bolão Mega da Virada</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --laranja: #f7931e;
+  --laranja-escuro: #e06d00;
+  --branco: #ffffff;
+  --cinza: #f4f4f4;
+  --texto: #333;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--cinza);
+  color: var(--texto);
+}
+
+header {
+  background: linear-gradient(90deg, var(--laranja), var(--laranja-escuro));
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  background: white;
+  border-bottom: 3px solid var(--laranja);
+}
+
+nav button {
+  background: none;
+  border: none;
+  padding: 15px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--laranja);
+}
+
+nav button.active {
+  background: var(--laranja);
+  color: white;
+}
+
+section {
+  display: none;
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+  background: white;
+  margin-top: 20px;
+  border-radius: 8px;
+}
+
+section.active {
+  display: block;
+}
+
+h2 {
+  color: var(--laranja-escuro);
+}
+
+input, textarea, button {
+  padding: 10px;
+  margin: 5px 0;
+  width: 100%;
+}
+
+button {
+  background: var(--laranja);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--laranja-escuro);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+table th {
+  background: var(--laranja);
+  color: white;
+}
+
+footer {
+  text-align: center;
+  padding: 15px;
+  margin-top: 30px;
+  color: #666;
+}
+</style>
 </head>
+
 <body>
-  <h1>Meu site está no ar 🚀</h1>
-  <p>Hospedado gratuitamente no GitHub Pages.</p>
+
+<header>
+  <h1>Instituto Cria-Atividade</h1>
+  <p>Bolão Solidário da Mega-Sena da Virada 🎉</p>
+</header>
+
+<nav>
+  <button class="active" onclick="trocarAba('inicio', this)">Início</button>
+  <button onclick="trocarAba('auditoria', this)">Auditoria</button>
+  <button onclick="trocarAba('cotas', this)">Cotas</button>
+</nav>
+
+<!-- INÍCIO -->
+<section id="inicio" class="active">
+  <h2>🎊 Bem-vindo ao Bolão da Mega da Virada</h2>
+  <p>
+    O <strong>Instituto Cria-Atividade</strong> realiza seu bolão de final de ano
+    com transparência, organização e espírito colaborativo.
+  </p>
+
+  <p>
+    📌 Objetivo: Participar da <strong>Mega-Sena da Virada</strong><br>
+    📌 Gestão clara de números e cotas<br>
+    📌 Auditoria aberta para todos os participantes
+  </p>
+
+  <p>
+    Navegue pelas abas acima para:
+  </p>
+  <ul>
+    <li>✔️ Conferir os números jogados</li>
+    <li>✔️ Ver e controlar as cotas</li>
+    <li>✔️ Garantir total transparência</li>
+  </ul>
+</section>
+
+<!-- AUDITORIA -->
+<section id="auditoria">
+  <h2>🔎 Auditoria dos Números Jogados</h2>
+
+  <p>Informe os números da aposta (separados por vírgula):</p>
+  <input type="text" id="numerosInput" placeholder="Ex: 05, 12, 23, 34, 45, 56">
+  <button onclick="adicionarNumeros()">Adicionar Jogo</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Números Jogados</th>
+      </tr>
+    </thead>
+    <tbody id="tabelaNumeros"></tbody>
+  </table>
+</section>
+
+<!-- COTAS -->
+<section id="cotas">
+  <h2>💰 Controle de Cotas</h2>
+
+  <input type="text" id="nomeCota" placeholder="Nome do participante">
+  <input type="number" id="qtdCota" placeholder="Quantidade de cotas">
+  <button onclick="adicionarCota()">Adicionar</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Participante</th>
+        <th>Cotas</th>
+      </tr>
+    </thead>
+    <tbody id="tabelaCotas"></tbody>
+  </table>
+
+  <h3 id="totalCotas">Total de cotas: 0</h3>
+</section>
+
+<footer>
+  © 2025 Instituto Cria-Atividade — Transparência e Impacto Social
+</footer>
+
+<script>
+function trocarAba(id, botao) {
+  document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  document.querySelectorAll("nav button").forEach(btn => btn.classList.remove("active"));
+  botao.classList.add("active");
+}
+
+// AUDITORIA
+let contadorJogos = 0;
+
+function adicionarNumeros() {
+  const input = document.getElementById("numerosInput");
+  if (!input.value.trim()) return;
+
+  contadorJogos++;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td>${contadorJogos}</td><td>${input.value}</td>`;
+  document.getElementById("tabelaNumeros").appendChild(tr);
+  input.value = "";
+}
+
+// COTAS
+let total = 0;
+
+function adicionarCota() {
+  const nome = document.getElementById("nomeCota").value;
+  const qtd = parseInt(document.getElementById("qtdCota").value);
+
+  if (!nome || !qtd) return;
+
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td>${nome}</td><td>${qtd}</td>`;
+  document.getElementById("tabelaCotas").appendChild(tr);
+
+  total += qtd;
+  document.getElementById("totalCotas").innerText = "Total de cotas: " + total;
+
+  document.getElementById("nomeCota").value = "";
+  document.getElementById("qtdCota").value = "";
+}
+</script>
+
 </body>
 </html>
